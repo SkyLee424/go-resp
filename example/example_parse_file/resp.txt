@@ -1,0 +1,21 @@
+*3
+$3
+set
+$27
+skyleeli:test:resp:example1
+$11
+Hello World
+*3
+$3
+set
+$27
+skyleeli:test:resp:example2
+$15
+Temporary Value
+*3
+$9
+pexpireat
+$27
+skyleeli:test:resp:example2
+$13
+1731381750578

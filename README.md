@@ -41,7 +41,8 @@ Reading or writing is not thread-safe and should not be done concurrently. You m
 
 ## Example
 
-See [example/example.go](example/example.go) for a simple example server.
+- See [example/example_server/example.go](example/example_server/example.go) for a simple example server.
+- See [example/example_parse_file/example.go](example/example_parse_file/example.go) for a simple example server that parses a RESP file.
 
 ## Benchmarks
 

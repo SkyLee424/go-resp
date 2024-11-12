@@ -9,6 +9,7 @@ import (
 	"io"
 	"math/big"
 	"net"
+	"os"
 	"strconv"
 	"sync/atomic"
 )
@@ -56,6 +57,19 @@ func NewServer(conn net.Conn) *Server {
 		maxBulkLength:      MaxBulkLength,
 		maxBufferSize:      MaxMultiBulkLength * MaxBulkLength,
 		conn:               conn,
+		appendIntBuf:       make([]byte, 0, 20),
+	}
+	return c
+}
+
+// NewServerWithFile returns a server to parse resp file
+func NewServerWithFile(file *os.File) *Server {
+	c := &Server{
+		rd:                 bufio.NewReaderSize(file, 65536),
+		wr:                 bufio.NewWriterSize(file, 65536),
+		maxMultiBulkLength: MaxMultiBulkLength,
+		maxBulkLength:      MaxBulkLength,
+		maxBufferSize:      MaxMultiBulkLength * MaxBulkLength,
 		appendIntBuf:       make([]byte, 0, 20),
 	}
 	return c
@@ -356,11 +370,14 @@ func (c *Server) next() ([][]byte, error) {
 // Close gracefully closes the incoming connection after flushing any pending writes.
 func (c *Server) Close() error {
 	flushErr := c.wr.Flush()
-	closeErr := c.conn.Close()
 	if flushErr != nil {
 		return flushErr
 	}
-	return closeErr
+	if c.conn != nil {
+		closeErr := c.conn.Close()
+		return closeErr
+	}
+	return nil
 }
 
 // CloseWithError closes the incoming connection after writing an error response.
